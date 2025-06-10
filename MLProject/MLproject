@@ -1,0 +1,9 @@
+name: online_shopper_project
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      model_name: {type: str, default: "online_shopper_model"}
+    command: "python modelling.py --model_name {model_name}"
