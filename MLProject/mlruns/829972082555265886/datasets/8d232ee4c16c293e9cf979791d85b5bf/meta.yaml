@@ -1,0 +1,20 @@
+digest: ff6b7084
+name: dataset
+profile: '{"num_rows": 1914, "num_elements": 34452}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "Administrative", "required":
+  true}, {"type": "double", "name": "Administrative_Duration", "required": true},
+  {"type": "double", "name": "Informational", "required": true}, {"type": "double",
+  "name": "Informational_Duration", "required": true}, {"type": "double", "name":
+  "ProductRelated", "required": true}, {"type": "double", "name": "ProductRelated_Duration",
+  "required": true}, {"type": "double", "name": "BounceRates", "required": true},
+  {"type": "double", "name": "ExitRates", "required": true}, {"type": "double", "name":
+  "PageValues", "required": true}, {"type": "double", "name": "SpecialDay", "required":
+  true}, {"type": "long", "name": "Month", "required": true}, {"type": "double", "name":
+  "OperatingSystems", "required": true}, {"type": "double", "name": "Browser", "required":
+  true}, {"type": "double", "name": "Region", "required": true}, {"type": "double",
+  "name": "TrafficType", "required": true}, {"type": "long", "name": "VisitorType",
+  "required": true}, {"type": "boolean", "name": "Weekend", "required": true}, {"type":
+  "long", "name": "Administrative_Duration_Bin", "required": true}]}'
+source: '{"tags": {"mlflow.user": "WAWAN", "mlflow.source.name": "modelling.py", "mlflow.source.type":
+  "LOCAL", "mlflow.source.git.commit": "8f45650903093acd90c575b8b6f4a30fec0c5808"}}'
+source_type: code

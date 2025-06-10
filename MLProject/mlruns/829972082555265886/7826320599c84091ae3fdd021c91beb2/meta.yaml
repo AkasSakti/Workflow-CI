@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Workflow-CI/MLProject/mlruns/829972082555265886/7826320599c84091ae3fdd021c91beb2/artifacts
+end_time: 1749589421618
+entry_point_name: ''
+experiment_id: '829972082555265886'
+lifecycle_stage: active
+run_id: 7826320599c84091ae3fdd021c91beb2
+run_name: painted-shrike-298
+run_uuid: 7826320599c84091ae3fdd021c91beb2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749589407670
+status: 3
+tags: []
+user_id: WAWAN
