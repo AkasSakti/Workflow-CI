@@ -17,7 +17,7 @@ tracking_dir = os.path.join(base_dir, "mlruns")
 os.makedirs(tracking_dir, exist_ok=True)
 
 # Set MLflow tracking ke folder lokal
-mlflow.set_tracking_uri(f"file:///{tracking_dir.replace(os.sep, '/')}")
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:///D:/Workflow-CI/MLProject/mlruns"))
 mlflow.set_experiment("Default")
 
 mlflow.autolog()  # Aktifkan autolog setelah URI diset
