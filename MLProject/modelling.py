@@ -9,27 +9,24 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 import plotly.graph_objects as go
 
-# Tetapkan base_dir relatif terhadap file ini (agar aman di GitHub Actions)
+# Set direktori dasar dan direktori tracking MLflow lokal
 base_dir = os.path.dirname(os.path.abspath(__file__))
-
-# MLflow tracking ke path lokal (relatif terhadap direktori ini)
 tracking_dir = os.path.join(base_dir, "mlruns")
-mlflow.set_tracking_uri(f"file://{tracking_dir}")
-
-# Set nama eksperimen (biar MLflow buat sendiri folder eksperimen)
+mlflow.set_tracking_uri(f"file:{tracking_dir}")
 mlflow.set_experiment("MyExperiment")
+
+# Autolog aktif
 mlflow.autolog()
 
+# Load data
+data_path = os.path.join(base_dir, "online_shoppers_intention_preprocessed.csv")
+df = pd.read_csv(data_path)
+X = df.drop(columns=["Revenue"])
+y = df["Revenue"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Jalankan eksperimen
 with mlflow.start_run() as run:
-    # Load data (pastikan file ada di direktori ini)
-    data_path = os.path.join(base_dir, "online_shoppers_intention_preprocessed.csv")
-    df = pd.read_csv(data_path)
-
-    X = df.drop(columns=["Revenue"])
-    y = df["Revenue"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Train model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
     mlflow.sklearn.log_model(model, "model")
@@ -60,9 +57,8 @@ with mlflow.start_run() as run:
     fig.write_html(estimator_html_path)
     mlflow.log_artifact(estimator_html_path)
 
-    # Cetak info untuk debugging
     print("=" * 60)
     print("Run ID:", run.info.run_id)
     print("Model Path:", f"runs:/{run.info.run_id}/model")
-    print("Tracking dir:", mlflow.get_tracking_uri())
+    print("Tracking dir:", tracking_dir)
     print("=" * 60)
