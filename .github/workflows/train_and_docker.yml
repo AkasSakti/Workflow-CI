@@ -43,14 +43,22 @@ jobs:
     - name: Get experiment ID from experiment name
       id: get_experiment_id
       run: |
-        echo "📌 Mencari experiment_id untuk 'MyExperiment'..."
-        EXP_ID=$(grep -A3 "name: MyExperiment" MLProject/mlruns/meta.yaml | grep experiment_id | awk '{print $2}')
+        echo "📌 Mencari experiment_id secara otomatis dari direktori..."
+        META_FILES=$(find MLProject/mlruns -name meta.yaml)
+
+        for FILE in $META_FILES; do
+          if grep -q "name: MyExperiment" "$FILE"; then
+            EXP_ID=$(grep "experiment_id" "$FILE" | awk '{print $2}')
+            echo "✅ EXP_ID ditemukan: $EXP_ID"
+            echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
+            break
+          fi
+        done
+
         if [[ -z "$EXP_ID" ]]; then
           echo "❌ experiment_id tidak ditemukan."
           exit 1
         fi
-        echo "✅ EXP_ID ditemukan: $EXP_ID"
-        echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
 
     - name: Get latest run_id from any experiment
       id: get_run_id
@@ -67,7 +75,6 @@ jobs:
         echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
         echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
         echo "MODEL_PATH=MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model" >> $GITHUB_ENV
-
 
     - name: Debug folder run
       run: |
