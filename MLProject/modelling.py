@@ -9,14 +9,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 import plotly.graph_objects as go
 
-# Set direktori dasar dan direktori tracking MLflow lokal
+# Setup MLflow tracking
 base_dir = os.path.dirname(os.path.abspath(__file__))
 tracking_dir = os.path.join(base_dir, "mlruns")
+os.makedirs(tracking_dir, exist_ok=True)
 mlflow.set_tracking_uri(f"file:{tracking_dir}")
 mlflow.set_experiment("MyExperiment")
 
-# Autolog aktif
-mlflow.autolog()
+# Autolog & manual log
+mlflow.autolog(disable=True)  # Matikan autolog untuk kontrol penuh
 
 # Load data
 data_path = os.path.join(base_dir, "online_shoppers_intention_preprocessed.csv")
@@ -25,13 +26,19 @@ X = df.drop(columns=["Revenue"])
 y = df["Revenue"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Jalankan eksperimen
+# Start MLflow run
 with mlflow.start_run() as run:
+    run_id = run.info.run_id
+
+    # Train model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
-    mlflow.sklearn.log_model(model, "model")
 
+    # Predict
     y_pred = model.predict(X_test)
+
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
 
     # Confusion Matrix
     cm = confusion_matrix(y_test, y_pred)
@@ -57,8 +64,9 @@ with mlflow.start_run() as run:
     fig.write_html(estimator_html_path)
     mlflow.log_artifact(estimator_html_path)
 
+    # Print info
     print("=" * 60)
-    print("Run ID:", run.info.run_id)
-    print("Model Path:", f"runs:/{run.info.run_id}/model")
+    print("Run ID:", run_id)
+    print("Model Path:", f"file://{tracking_dir}/0/{run_id}/artifacts/model")
     print("Tracking dir:", tracking_dir)
     print("=" * 60)
