@@ -87,5 +87,6 @@ jobs:
         commit_message: "Update tautan Docker Hub otomatis"
         file_pattern: 'MLProject/tautan_dockerhub.txt'
         commit_author: AkasSakti <146935384+AkasSakti@users.noreply.github.com>
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        push_options: '--force'
+        token: ${{ secrets.GITHUB_TOKEN }}  # INI YANG WAJIB DITAMBAHKAN
+
