@@ -32,53 +32,28 @@ jobs:
 
     - name: Cek isi folder mlruns
       run: |
-        echo "Cek isi MLProject/mlruns:"
-        ls -l MLProject/mlruns || echo "❌ Folder belum terisi"
+        ls -lR MLProject/mlruns || echo "❌ Folder belum terisi"
 
-    - name: Debug isi mlruns
+    - name: Get latest run_id and model path
+      id: get_run_info
       run: |
-        echo "📁 Isi folder mlruns secara rekursif:"
-        ls -R MLProject/mlruns || echo "⚠️ mlruns belum terbentuk"
-
-    - name: Get experiment ID from experiment name
-      id: get_experiment_id
-      run: |
-        echo "📌 Mencari experiment_id secara otomatis dari direktori..."
-        META_FILES=$(find MLProject/mlruns -name meta.yaml)
-
-        for FILE in $META_FILES; do
-          if grep -q "name: MyExperiment" "$FILE"; then
-            EXP_ID=$(grep "experiment_id" "$FILE" | awk '{print $2}')
-            echo "✅ EXP_ID ditemukan: $EXP_ID"
-            echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
-            break
-          fi
-        done
-
-        if [[ -z "$EXP_ID" ]]; then
-          echo "❌ experiment_id tidak ditemukan."
-          exit 1
-        fi
-
-    - name: Get latest run_id from any experiment
-      id: get_run_id
-      run: |
-        echo "🔍 Mendeteksi run_id dari semua experiment..."
-        EXP_DIR=$(find MLProject/mlruns -mindepth 2 -maxdepth 2 -type d | sort -r | head -n 1)
+        EXP_DIR=$(find MLProject/mlruns -mindepth 3 -maxdepth 3 -type d -name "artifacts" | sort -r | head -n 1)
         if [[ -z "$EXP_DIR" ]]; then
-          echo "❌ Tidak ada run ditemukan di MLProject/mlruns."
+          echo "❌ Tidak ditemukan artifacts"
           exit 1
         fi
-        RUN_ID=$(basename "$EXP_DIR")
-        EXP_ID=$(basename $(dirname "$EXP_DIR"))
-        echo "✅ Ditemukan EXP_ID=$EXP_ID dan RUN_ID=$RUN_ID"
+        RUN_ID=$(basename $(dirname "$EXP_DIR"))
+        EXP_ID=$(basename $(dirname $(dirname "$EXP_DIR")))
+        MODEL_PATH="MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model"
+        echo "✅ EXP_ID=$EXP_ID"
+        echo "✅ RUN_ID=$RUN_ID"
+        echo "✅ MODEL_PATH=$MODEL_PATH"
         echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
         echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        echo "MODEL_PATH=MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model" >> $GITHUB_ENV
+        echo "MODEL_PATH=$MODEL_PATH" >> $GITHUB_ENV
 
     - name: Debug folder run
       run: |
-        echo "📁 Isi folder run:"
         ls -R MLProject/mlruns/${{ env.EXPERIMENT_ID }}/${{ env.RUN_ID }}
 
     - name: Login to DockerHub
