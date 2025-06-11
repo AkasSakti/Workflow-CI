@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 base_dir = os.path.dirname(os.path.abspath(__file__))
 tracking_dir = os.path.join(base_dir, "mlruns")
 os.makedirs(tracking_dir, exist_ok=True)
-mlflow.set_tracking_uri("file:mlruns")
+mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("MyExperiment")
 
 # Autolog & manual log
