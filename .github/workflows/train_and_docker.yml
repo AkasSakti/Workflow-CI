@@ -6,6 +6,9 @@ on:
       - 'MLProject/**'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   train-and-dockerize:
     runs-on: ubuntu-latest
@@ -83,3 +86,6 @@ jobs:
       with:
         commit_message: "Update tautan Docker Hub otomatis"
         file_pattern: 'MLProject/tautan_dockerhub.txt'
+        commit_author: AkasSakti <146935384+AkasSakti@users.noreply.github.com>
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
