@@ -52,19 +52,22 @@ jobs:
         echo "✅ EXP_ID ditemukan: $EXP_ID"
         echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
 
-    - name: Get latest run_id from MLflow
+    - name: Get latest run_id from any experiment
       id: get_run_id
       run: |
-        echo "🔎 Mencari run_id terakhir dari experiment $EXPERIMENT_ID..."
-        RUN_DIR=$(ls -td MLProject/mlruns/${{ env.EXPERIMENT_ID }}/*/ 2>/dev/null | head -1)
-        if [[ -z "$RUN_DIR" ]]; then
-          echo "❌ Tidak ada run ditemukan, proses dihentikan."
+        echo "🔍 Mendeteksi run_id dari semua experiment..."
+        EXP_DIR=$(find MLProject/mlruns -mindepth 2 -maxdepth 2 -type d | sort -r | head -n 1)
+        if [[ -z "$EXP_DIR" ]]; then
+          echo "❌ Tidak ada run ditemukan di MLProject/mlruns."
           exit 1
         fi
-        RUN_ID=$(basename "$RUN_DIR")
-        echo "✅ Ditemukan RUN_ID: $RUN_ID"
+        RUN_ID=$(basename "$EXP_DIR")
+        EXP_ID=$(basename $(dirname "$EXP_DIR"))
+        echo "✅ Ditemukan EXP_ID=$EXP_ID dan RUN_ID=$RUN_ID"
+        echo "EXPERIMENT_ID=$EXP_ID" >> $GITHUB_ENV
         echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        echo "MODEL_PATH=MLProject/mlruns/${{ env.EXPERIMENT_ID }}/$RUN_ID/artifacts/model" >> $GITHUB_ENV
+        echo "MODEL_PATH=MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model" >> $GITHUB_ENV
+
 
     - name: Debug folder run
       run: |
