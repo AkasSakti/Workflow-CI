@@ -34,20 +34,25 @@ jobs:
       run: |
         echo "Cek isi MLProject/mlruns/0:"
         ls -l MLProject/mlruns/0 || echo "❌ Folder belum terisi"
+    
+    - name: Debug mlruns folder
+      run: |
+        echo "📁 Isi folder mlruns:"
+        ls -R MLProject/mlruns || echo "⚠️ mlruns belum terbentuk"
 
     - name: Get latest run_id from MLflow
       id: get_run_id
       run: |
-        echo "🔎 Mencari run_id terakhir..."
-        RUN_DIR=$(ls -td MLProject/mlruns/0/*/ 2>/dev/null | head -1)
+       echo "🔎 Mencari run_id terakhir..."
+       RUN_DIR=$(ls -td MLProject/mlruns/0/*/ 2>/dev/null | head -1)
         if [[ -z "$RUN_DIR" ]]; then
-          echo "❌ Tidak ada run ditemukan, proses dihentikan."
-          exit 1
-        fi
-        RUN_ID=$(basename "$RUN_DIR")
-        echo "✅ Ditemukan RUN_ID: $RUN_ID"
-        echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        echo "MODEL_PATH=MLProject/mlruns/0/$RUN_ID/artifacts/model" >> $GITHUB_ENV
+        echo "❌ Tidak ada run ditemukan, proses dihentikan."
+       exit 1
+       fi
+       RUN_ID=$(basename "$RUN_DIR")
+       echo "✅ Ditemukan RUN_ID: $RUN_ID"
+       echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+       echo "MODEL_PATH=MLProject/mlruns/0/$RUN_ID/artifacts/model" >> $GITHUB_ENV
 
     - name: Debug folder run
       run: |
