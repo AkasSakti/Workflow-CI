@@ -12,15 +12,22 @@ import plotly.graph_objects as go
 # Lokasi direktori proyek
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
-# Buat tracking folder kalau belum ada
+# Buat folder tracking lokal
 tracking_dir = os.path.join(base_dir, "mlruns")
 os.makedirs(tracking_dir, exist_ok=True)
 
-# Set MLflow tracking ke folder lokal
+# Set URI tracking MLflow
 mlflow.set_tracking_uri(f"file://{tracking_dir}")
-mlflow.set_experiment("Default")
 
-mlflow.autolog()  # Aktifkan autolog setelah URI diset
+# Buat eksperimen kalau belum ada
+experiment_name = "Default"
+try:
+    mlflow.create_experiment(experiment_name)
+except mlflow.exceptions.MlflowException:
+    pass  # Sudah ada
+
+mlflow.set_experiment(experiment_name)
+mlflow.autolog()  # Baru aktifkan setelah set_experiment
 
 # Load data
 data_path = os.path.join(base_dir, "online_shoppers_intention_preprocessed.csv")
