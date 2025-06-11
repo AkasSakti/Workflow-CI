@@ -9,18 +9,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 import plotly.graph_objects as go
 
-# Lokasi direktori proyek
-base_dir = os.path.abspath(os.path.dirname(__file__))
+# ✅ arahkan ke direktori tracking lokal relatif, aman untuk GitHub Actions
+mlflow.set_tracking_uri("file:./mlruns")
 
-# Buat tracking folder kalau belum ada
-tracking_dir = os.path.join(base_dir, "mlruns")
-os.makedirs(tracking_dir, exist_ok=True)
+# ✅ set eksperimen (biar MLflow yang buat folder & meta.yaml)
+mlflow.set_experiment("MyExperiment")
 
-# Set MLflow tracking ke folder lokal
-mlflow.set_tracking_uri(tracking_dir)
-mlflow.set_experiment("Default")
-
-mlflow.autolog()  # Aktifkan autolog setelah URI diset
+mlflow.autolog()  # boleh setelah tracking URI
+with mlflow.start_run():
 
 # Load data
 data_path = os.path.join(base_dir, "online_shoppers_intention_preprocessed.csv")
