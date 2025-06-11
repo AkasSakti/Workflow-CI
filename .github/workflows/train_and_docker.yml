@@ -44,7 +44,7 @@ jobs:
         fi
         RUN_ID=$(basename $(dirname "$EXP_DIR"))
         EXP_ID=$(basename $(dirname $(dirname "$EXP_DIR")))
-        MODEL_PATH="MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model"
+        MODEL_PATH="${{ github.workspace }}/MLProject/mlruns/$EXP_ID/$RUN_ID/artifacts/model"
         echo "✅ EXP_ID=$EXP_ID"
         echo "✅ RUN_ID=$RUN_ID"
         echo "✅ MODEL_PATH=$MODEL_PATH"
@@ -54,7 +54,7 @@ jobs:
 
     - name: Debug folder run
       run: |
-        ls -R MLProject/mlruns/${{ env.EXPERIMENT_ID }}/${{ env.RUN_ID }}
+        ls -R "${{ env.MODEL_PATH }}"
 
     - name: Login to DockerHub
       uses: docker/login-action@v2
