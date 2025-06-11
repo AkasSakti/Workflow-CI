@@ -26,9 +26,8 @@ jobs:
       run: pip install mlflow
 
     - name: Train Model via Conda
+      working-directory: MLProject
       run: |
-        cd MLProject
-        mkdir -p mlruns/0
         conda run -n mlflow-env python modelling.py
 
     - name: Cek isi folder mlruns
