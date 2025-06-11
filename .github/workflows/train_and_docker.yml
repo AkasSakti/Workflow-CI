@@ -27,8 +27,8 @@ jobs:
 
     - name: Train Model via Conda
       run: |
-        mkdir -p MLProject/mlruns/0  # ✅ Buat direktori jika belum ada
         cd MLProject
+        mkdir -p mlruns/0
         conda run -n mlflow-env python modelling.py
 
     - name: Cek isi folder mlruns
@@ -48,7 +48,7 @@ jobs:
         RUN_ID=$(basename "$RUN_DIR")
         echo "✅ Ditemukan RUN_ID: $RUN_ID"
         echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        echo "MODEL_PATH=runs:/$RUN_ID/model" >> $GITHUB_ENV
+        echo "MODEL_PATH=MLProject/mlruns/0/$RUN_ID/artifacts/model" >> $GITHUB_ENV
 
     - name: Debug folder run
       run: |
@@ -65,7 +65,7 @@ jobs:
       run: |
         echo "🐳 Building Docker Image from MODEL_PATH=${{ env.MODEL_PATH }}"
         mlflow models build-docker \
-          -m "${{ env.MODEL_PATH }}" \
+          -m "file://${{ env.MODEL_PATH }}" \
           --env-manager=local \
           -n "${{ secrets.DOCKERHUB_USERNAME }}/online_shopper_model:latest"
 
